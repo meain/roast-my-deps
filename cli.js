@@ -7,7 +7,6 @@ const chalk = require('chalk');
 const findUp = require('find-up');
 const arrify = require('arrify');
 const prettyBytes = require('pretty-bytes');
-const Table = require('cli-table');
 const roastMyDeps = require('./');
 
 const cli = meow({
@@ -68,20 +67,6 @@ async function main() {
       only: arrify(cli.flags.only),
       verbose: cli.flags.verbose
     });
-
-    let table = new Table({
-      head: ['Name', 'min', 'min+gz']
-    });
-
-    results.forEach(result => {
-      table.push([
-        result.entry.name === '_all' ? chalk.bold.yellow('All'): result.entry.name,
-        prettyBytes(result.sizes.outputBytes),
-        prettyBytes(result.sizes.outputBytesGz),
-      ]);
-    });
-
-    console.log(table.toString());
   } catch (err) {
     console.error(err);
     return process.exit(1);

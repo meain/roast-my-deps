@@ -252,11 +252,11 @@ async function roastMyDeps(rootPkgPath /*: string */, opts /*: RoastMyDepsOpts *
       result.sizes.outputBytes = result.sizes.outputBytes - emptyResults.sizes.outputBytes;
       result.sizes.outputBytesGz = result.sizes.outputBytesGz - emptyResults.sizes.outputBytesGz;
 
-      console.log(chalk.bold.bgGreen.white(
-        `${result.entry.name}: ${prettyBytes(result.sizes.outputBytes)} min, ${prettyBytes(result.sizes.outputBytesGz)} min+gz`
-      ));
+      console.log(chalk.bold.green(
+        `${result.entry.name}`),` ${prettyBytes(result.sizes.outputBytes)} min, ${prettyBytes(result.sizes.outputBytesGz)} min+gz`
+      );
     } else {
-      console.error(chalk.red(result.entry.name));
+      console.error(chalk.red(result.entry.name), ` build failed with error code ${result.code}`);
     }
 
     return result;
@@ -267,13 +267,12 @@ async function roastMyDeps(rootPkgPath /*: string */, opts /*: RoastMyDepsOpts *
   let successful = results.filter(res => {
     if (res.code !== 0) {
       hasErrors = true;
-      console.error(chalk.red(`Failed to build ${chalk.bold(res.entry.name)}, exited with ${chalk.bold(res.code)}`));
     }
     return res.code === 0;
   });
 
   if (hasErrors && !verbose) {
-    console.error(chalk.red(`\nSome bundles failed to build. Try re-running with ${chalk.bold('--verbose')}\n`));
+    console.error(chalk.red(`\nSome bundles failed to build. Try re-running with ${chalk.bold('--verbose')}`));
   }
 
   let sorted = successful.sort((a, b) => {
