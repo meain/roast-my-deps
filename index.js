@@ -219,6 +219,13 @@ async function roastMyDeps(rootPkgPath /*: string */, opts /*: RoastMyDepsOpts *
 
   let entries = [];
 
+  const maxDepLength = Object.keys(importBuckets).reduce(( cur, depName ) => {
+    if(cur.length > depName.length)
+      return cur
+    else
+      return depName
+  }).length
+
   await Promise.all(Object.keys(importBuckets).map(async depName => {
     let matches = importBuckets[depName] || [];
     let fileContents = matches.map(match => `f(require("${match}"));`).join('\n');
@@ -253,10 +260,10 @@ async function roastMyDeps(rootPkgPath /*: string */, opts /*: RoastMyDepsOpts *
       result.sizes.outputBytesGz = result.sizes.outputBytesGz - emptyResults.sizes.outputBytesGz;
 
       console.log(chalk.bold.green(
-        `${result.entry.name}`),` ${prettyBytes(result.sizes.outputBytes)} min, ${prettyBytes(result.sizes.outputBytesGz)} min+gz`
+        `${result.entry.name.padStart(maxDepLength, ' ')}`),` min: ${prettyBytes(result.sizes.outputBytes).padEnd(10, ' ')} min+gz: ${prettyBytes(result.sizes.outputBytesGz)}`
       );
     } else {
-      console.error(chalk.red(result.entry.name), ` build failed with error code ${result.code}`);
+      console.error(chalk.red(result.entry.name.padStart(maxDepLength, ' ')), ` build failed with error code ${result.code}`);
     }
 
     return result;
